@@ -80,3 +80,14 @@ index 67f9ff399..7bf8ae72e 100644
  }
  
  // Inertia expressed in frame F and about F's origin OF. Note that frame F
+diff --git a/Simbody/src/MobilizedBodyImpl.h b/Simbody/src/MobilizedBodyImpl.h
+--- a/Simbody/src/MobilizedBodyImpl.h
++++ b/Simbody/src/MobilizedBodyImpl.h
+@@ -838,7 +838,6 @@
+        (const State& s, Stage stage, Array_<DecorativeGeometry>& geom) const override;
+ 
+     void setDefaultRadii(const Vec3& r) {
+-        assert(r[0]>0 && r[1]>0 && r[2]>0);
+         invalidateTopologyCache();
+         defaultRadii=r;
+     }

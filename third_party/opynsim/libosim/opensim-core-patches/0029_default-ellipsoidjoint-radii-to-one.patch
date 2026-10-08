@@ -1,0 +1,29 @@
+This changes `EllipsoidJoint`'s `radii_x_y_z` property to default to 1.0 in
+each dimension, rather than NaN.
+
+The NaN default means that loading an osim file that omits `radii_x_y_z`
+propagates NaN into `MobilizedBody::Ellipsoid::setDefaultRadii`, which has a
+Debug-only `assert(r[0]>0 && r[1]>0 && r[2]>0)`. Because every comparison
+against NaN is false, the assertion fires and aborts the process, so such a
+file loads in a Release build but crashes a Debug build.
+
+OPynSim philosophy note: if a data file works in a release of OpenSim then
+OPynSim should try to accept it: regardless of build configuration. A unit
+radii default is also a more useful fallback than NaN, because the radii are
+used for visualization: a NaN ellipsoid cannot be drawn, whereas a unit one
+can.
+
+---
+
+diff --git a/OpenSim/Simulation/SimbodyEngine/EllipsoidJoint.cpp b/OpenSim/Simulation/SimbodyEngine/EllipsoidJoint.cpp
+--- a/OpenSim/Simulation/SimbodyEngine/EllipsoidJoint.cpp
++++ b/OpenSim/Simulation/SimbodyEngine/EllipsoidJoint.cpp
+@@ -80,7 +80,7 @@
+ void EllipsoidJoint::constructProperties()
+ {
+     setAuthors("Ajay Seth");
+-    SimTK::Vec3 radii(NaN);
++    SimTK::Vec3 radii(1.0);
+     constructProperty_radii_x_y_z(radii);
+ 
+     Appearance appearance;

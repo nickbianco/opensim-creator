@@ -27,6 +27,7 @@
 #include <OpenSim/Common/ScaleSet.h>
 #include <OpenSim/Common/Logger.h>
 #include <OpenSim/Common/Object.h>
+#include <OpenSim/Common/PropertyStr.h>
 #include <OpenSim/Simulation/SimbodyEngine/Body.h>
 #include <OpenSim/Simulation/Model/Model.h>
 #include <OpenSim/Simulation/Model/PhysicalOffsetFrame.h>
@@ -794,7 +795,7 @@ void Smith2018ContactMesh::printMeshDebugInfo() const {
         SimTK::Vec3 n = normal(i);
 
         log_trace("{:<10} {:<15} {:<15} {:<15} {:<15} {:<35} {:<35}",
-          i, a, t, E, v, c, n);
+          i, a, t, E, v, SimTK::String(c), SimTK::String(n));
     }
 }
 

@@ -22,6 +22,7 @@
 #include <OpenSim/Simulation/Model/Probe.h>
 #include <OpenSim/Simulation/Model/StationDefinedFrame.h>
 #include <OpenSim/Simulation/SimbodyEngine/BallJoint.h>
+#include <OpenSim/Simulation/SimbodyEngine/CantileverFreeBeamJoint.h>
 #include <OpenSim/Simulation/SimbodyEngine/ConstantDistanceConstraint.h>
 #include <OpenSim/Simulation/SimbodyEngine/Constraint.h>
 #include <OpenSim/Simulation/SimbodyEngine/CoordinateCouplerConstraint.h>
@@ -102,6 +103,10 @@ namespace
             {
                 "BallJoint",
                 "A Ball joint. The underlying implementation in Simbody is SimTK::MobilizedBody::Ball. The Ball joint implements a fixed 1-2-3 (X-Y-Z) body-fixed Euler sequence, without translations, for generalized coordinate calculation. Ball joint uses quaternions in calculation and are therefore singularity-free (unlike GimbalJoint)."
+            },
+            {
+                "CantileverFreeBeamJoint",
+                "A CantileverFreeBeam joint. The underlying implementation in Simbody is a SimTK::MobilizedBody::CantileverFreeBeam. The CantileverFreeBeam provides three mobilities with coordinates that drive a fixed 1-2-3 (X-Y-Z) body-fixed Euler sequence with body translations coupled to rotations based on the deflection equations of a cantilever-free beam subject to a transverse point load. The generalized speeds are the time derivatives of the generalized coordinates, u = qdot, like that of a GimbalJoint.",
             },
             {
                 "CustomJoint",
@@ -427,13 +432,12 @@ namespace
                 joint_with_coords<OpenSim::BallJoint>({"rx", "ry", "rz"}),
             },
             {
+                "CantileverFreeBeamJoint",
+                joint_with_coords<OpenSim::CantileverFreeBeamJoint>({"rx", "ry", "rz"}),
+            },
+            {
                 "EllipsoidJoint",
-                []
-                {
-                    auto joint = joint_with_coords<OpenSim::EllipsoidJoint>({"rx", "ry", "rz"});
-                    joint->updProperty_radii_x_y_z() = {1.0, 1.0, 1.0};
-                    return joint;
-                }(),
+                joint_with_coords<OpenSim::EllipsoidJoint>({"rx", "ry", "rz"}),
             },
             {
                 "FreeJoint",

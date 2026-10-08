@@ -1,0 +1,10 @@
+diff --git a/OpenSim/Common/ArrayPtrs.h b/OpenSim/Common/ArrayPtrs.h
+--- a/OpenSim/Common/ArrayPtrs.h
++++ b/OpenSim/Common/ArrayPtrs.h
+@@ -30,6 +30,7 @@
+
+ #include "osimCommonDLL.h"
+ #include <iostream>
++#include <type_traits>
+ #include "Exception.h"
+ #include "Logger.h"

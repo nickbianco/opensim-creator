@@ -218,9 +218,7 @@ add_library(osim STATIC
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/BigMatrix/src/ElementFilter.cpp
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/BigMatrix/src/MatrixCharacteristics.cpp
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/BigMatrix/src/MatrixHelper.cpp
-    ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/Scalar/src/Scalar.cpp
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/Mechanics/src/Rotation.cpp
-    ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/Mechanics/src/CoordinateAxis.cpp
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/Mechanics/src/Quaternion.cpp
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/Mechanics/src/UnitVec.cpp
     ${OPYN_SIMBODY_BASEDIR}/SimTKcommon/Mechanics/src/MassProperties.cpp
@@ -409,6 +407,7 @@ add_library(osim STATIC
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Control/ControlLinear.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Control/ControlLinearNode.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/StatesTrajectory.cpp
+    ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/StatesDocument.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/Scholz2015GeometryPath.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/Analysis.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/AbstractPathPoint.cpp
@@ -454,6 +453,8 @@ add_library(osim STATIC
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/BushingForce.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/ActuatorForceProbe.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/CoordinateLimitForce.cpp
+    ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/CoordinateLinearStopForce.cpp
+    ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/ExponentialCoordinateLimitForce.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/Model.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/FunctionBasedBushingForce.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/Model/Frame.cpp
@@ -507,6 +508,7 @@ add_library(osim STATIC
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/SimbodyEngine.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/PointConstraint.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/ConstantCurvatureJoint.cpp
+    ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/CantileverFreeBeamJoint.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/WeldJoint.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/UniversalJoint.cpp
     ${OPYN_OPENSIM_BASEDIR}/OpenSim/Simulation/SimbodyEngine/SpatialTransform.cpp
@@ -640,7 +642,12 @@ PUBLIC
     # these ensure that `declspec(import)/declspec(export)` isn't used
     SimTK_USE_STATIC_LIBRARIES=1
     LEPTON_BUILDING_STATIC_LIBRARY=1
-    OPENSIM_USE_STATIC_LIBRARIES=1
+    OPENSIM_COMMON_TYPE_STATIC=1
+    OPENSIM_SIMULATION_TYPE_STATIC=1
+    OPENSIM_ACTUATORS_TYPE_STATIC=1
+    OPENSIM_ANALYSES_TYPE_STATIC=1
+    OPENSIM_TOOLS_TYPE_STATIC=1
+    OPENSIM_EXAMPLECOMPONENTS_TYPE_STATIC=1
     OPENSIM_DISABLE_STATIC_TYPE_REGISTRATION=1  # disable objects being registered during static init time
 
     # This disables the operators from SimTK that newer compilers have problems with

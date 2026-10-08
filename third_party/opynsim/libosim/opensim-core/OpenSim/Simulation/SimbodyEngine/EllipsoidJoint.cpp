@@ -80,7 +80,7 @@ EllipsoidJoint::EllipsoidJoint(const std::string&    name,
 void EllipsoidJoint::constructProperties()
 {
     setAuthors("Ajay Seth");
-    SimTK::Vec3 radii(NaN);
+    SimTK::Vec3 radii(1.0);
     constructProperty_radii_x_y_z(radii);
 
     Appearance appearance;

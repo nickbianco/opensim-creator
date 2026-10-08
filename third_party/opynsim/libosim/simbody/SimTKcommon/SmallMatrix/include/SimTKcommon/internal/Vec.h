@@ -346,7 +346,7 @@ public:
     dimension as this Vec but with each element replaced by whatever it thinks
     its absolute value is. The element type may have changed and the stride
     of the return Vec is always 1. **/
-    TAbs abs() const {
+    SimTK_NODISCARD TAbs abs() const {
         TAbs vabs;
         for(int i=0;i<M;++i) vabs[i] = CNT<E>::abs(d[i*STRIDE]);
         return vabs;
@@ -438,14 +438,14 @@ public:
     source %Vec; gaps due to stride are not accessed in either source or
     destination. **/
     constexpr Vec(const Vec& src) {
-        assignElementsAsRandomAccessRange(src, std::make_integer_sequence<int, M>{});
+        assignElementsFromVec(src);
     }
     /** Copy assignment operator copies the logically-included elements from 
     the source %Vec; gaps due to stride are not accessed in either source or
     destination. OK if source and destination are the same vector; results
     are unpredictable if they otherwise overlap with elements in common. **/
     constexpr Vec& operator=(const Vec& src) {
-        assignElementsAsRandomAccessRange(src, std::make_integer_sequence<int, M>{});
+        assignElementsFromVec(src);
         return *this;
     }
 
@@ -453,21 +453,21 @@ public:
     and element type but with a different stride. **/
     template <int SS>
     constexpr Vec(const Vec<M,E,SS>& src) {
-        assignElementsAsRandomAccessRange(src, std::make_integer_sequence<int, M>{});
+        assignElementsFromVec(src);
     }
 
     /** This is an implicit conversion from a %Vec of the same length
     and \e negated element type (possibly with a different stride). **/
     template <int SS>
     constexpr Vec(const Vec<M,ENeg,SS>& src) {
-        assignElementsAsRandomAccessRange(src, std::make_integer_sequence<int, M>{});
+        assignElementsFromVec(src);
     }
 
     /** Construct a Vec from a Vec of the same length, with any stride. Works 
     as long as the element types are assignment compatible. **/
     template <class EE, int SS>
     explicit constexpr Vec(const Vec<M,EE,SS>& src) {
-        assignElementsAsRandomAccessRange(src, std::make_integer_sequence<int, M>{});
+        assignElementsFromVec(src);
     }
 
     /** Construction from a single value of this %Vec's element type assigns
@@ -491,15 +491,73 @@ public:
 
     // A bevy of constructors for Vecs up to length 9.
 
-    /** Construct a Vec<2,E> from two elements of type E, etc. **/
-    constexpr Vec(const E& e0, const E& e1)                                                                                            requires (M == 2) { assignElementsAsTuple(std::make_tuple(e0, e1),                             std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2)                                                                               requires (M == 3) { assignElementsAsTuple(std::make_tuple(e0, e1, e2),                         std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3)                                                                  requires (M == 4) { assignElementsAsTuple(std::make_tuple(e0, e1, e2, e3),                     std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3, const E& e4)                                                     requires (M == 5) { assignElementsAsTuple(std::make_tuple(e0, e1, e2, e3, e4),                 std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3, const E& e4, const E& e5)                                        requires (M == 6) { assignElementsAsTuple(std::make_tuple(e0, e1, e2, e3, e4, e5),             std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3, const E& e4, const E& e5, const E& e6)                           requires (M == 7) { assignElementsAsTuple(std::make_tuple(e0, e1, e2, e3, e4, e5, e6),         std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3, const E& e4, const E& e5, const E& e6, const E& e7)              requires (M == 8) { assignElementsAsTuple(std::make_tuple(e0, e1, e2, e3, e4, e5, e6, e7),     std::make_integer_sequence<int, M>{}); }
-    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3, const E& e4, const E& e5, const E& e6, const E& e7, const E& e8) requires (M == 9) { assignElementsAsTuple(std::make_tuple(e0, e1, e2, e3, e4, e5, e6, e7, e8), std::make_integer_sequence<int, M>{}); }
+    /** Construct a `Vec<M,E>` from `M` elements of type `E`, etc. **/
+    constexpr Vec(const E& e0, const E& e1)
+    requires (M == 2)
+    { assignElements(e0, e1);}
+
+    constexpr Vec(const E& e0, const E& e1, const E& e2)
+    requires (M == 3)
+    { assignElements(e0, e1, e2); }
+
+    constexpr Vec(const E& e0, const E& e1, const E& e2, const E& e3)
+    requires (M == 4)
+    { assignElements(e0, e1, e2, e3); }
+
+    constexpr Vec(
+        const E& e0,
+        const E& e1,
+        const E& e2,
+        const E& e3,
+        const E& e4)
+    requires (M == 5)
+    { assignElements(e0, e1, e2, e3, e4); }
+
+    constexpr Vec(
+        const E& e0,
+        const E& e1,
+        const E& e2,
+        const E& e3,
+        const E& e4,
+        const E& e5)
+    requires (M == 6)
+    { assignElements(e0, e1, e2, e3, e4, e5); }
+
+    constexpr Vec(
+        const E& e0,
+        const E& e1,
+        const E& e2,
+        const E& e3,
+        const E& e4,
+        const E& e5,
+        const E& e6)
+    requires (M == 7)
+    { assignElements(e0, e1, e2, e3, e4, e5, e6); }
+
+    constexpr Vec(
+        const E& e0,
+        const E& e1,
+        const E& e2,
+        const E& e3,
+        const E& e4,
+        const E& e5,
+        const E& e6,
+        const E& e7)
+    requires (M == 8)
+    { assignElements(e0, e1, e2, e3, e4, e5, e6, e7); }
+
+    constexpr Vec(
+        const E& e0,
+        const E& e1,
+        const E& e2,
+        const E& e3,
+        const E& e4,
+        const E& e5,
+        const E& e6,
+        const E& e7,
+        const E& e8)
+    requires (M == 9)
+    { assignElements(e0, e1, e2, e3, e4, e5, e6, e7, e8); }
 
     /** Construction from a pointer to elements of any type EE assumes we're 
     pointing at a C++ array of EE's of the right length, and that EE is
@@ -612,7 +670,7 @@ public:
     Vec<> does, because we can eliminate the negation here almost for free.
     But we can't standardize (change conjugate to complex) for free, so we'll retain
     conjugates if there are any. **/
-    TNormalize normalize() const {
+    SimTK_NODISCARD TNormalize normalize() const {
         if (CNT<E>::IsScalar) {
             return castAwayNegatorIfAny() / (int(SignInterpretation)*norm());
         } else {
@@ -624,7 +682,7 @@ public:
     }
 
     /** This method is not supported for %Vec objects. **/
-    TInvert invert() const {assert(false); return TInvert();} // TODO default inversion
+    SimTK_NODISCARD TInvert invert() const {assert(false); return TInvert();} // TODO default inversion
 
     /** Unary plus does nothing. **/
     const Vec&   operator+() const { return *this; }
@@ -645,13 +703,13 @@ public:
     THerm&       operator~()       { return updTranspose(); }
 
     /** Non-operator version of unary negation; just a recast. **/
-    const TNeg&  negate() const { return *reinterpret_cast<const TNeg*>(this); }
+    SimTK_NODISCARD const TNeg&  negate() const { return *reinterpret_cast<const TNeg*>(this); }
     /** Non-operator version of unary negation; recasts and returns a 
     writable reference. **/
     TNeg&        updNegate()    { return *reinterpret_cast<      TNeg*>(this); }
 
     /** Non-operator version of Hermitian transpose; just a recast. **/
-    const THerm& transpose()    const { return *reinterpret_cast<const THerm*>(this); }
+    SimTK_NODISCARD const THerm& transpose()    const { return *reinterpret_cast<const THerm*>(this); }
     /** Non-operator version of Hermitian transpose; recasts and returns a 
     writable reference. **/
     THerm&       updTranspose()       { return *reinterpret_cast<      THerm*>(this); }
@@ -660,7 +718,7 @@ public:
     the individual elements. That is, a Vec<2,Vec3> becomes a Row<2,Vec3>,
     rather than a Row<2,Row3> as would happen with ordinary transpose(). This
     is just a recast; no copying or computation is performed here. **/
-    const TPosTrans& positionalTranspose() const
+    SimTK_NODISCARD const TPosTrans& positionalTranspose() const
         { return *reinterpret_cast<const TPosTrans*>(this); }
     /** Positional transpose returning a writable reference. **/
     TPosTrans&       updPositionalTranspose()
@@ -993,15 +1051,37 @@ public:
 
 private:
     template<typename ElementsRowByRowTuple, int... Idx>
-    constexpr void assignElementsAsTuple(ElementsRowByRowTuple&& els, std::integer_sequence<int, Idx...>)
+    requires (sizeof...(Idx) == M)
+    constexpr void assignElementsFromTuple(
+        ElementsRowByRowTuple&& els,
+        std::integer_sequence<int, Idx...>)
     {
-        ((d[Idx] = std::get<Idx>(els)) , ...);
+        (((*this)[Idx] = std::get<Idx>(els)) , ...);
     }
 
     template<typename R, int... Idx>
-    constexpr void assignElementsAsRandomAccessRange(R&& range, std::integer_sequence<int, Idx...>)
+    requires (sizeof...(Idx) == M)
+    constexpr void assignElementsFromRange(
+        R&& range,
+        std::integer_sequence<int, Idx...>)
     {
-        ((d[Idx] = range[Idx]) , ...);
+        (((*this)[Idx] = range[Idx]) , ...);
+    }
+
+    template <class EE, int SS>
+    constexpr void assignElementsFromVec(const Vec<M, EE, SS>& v)
+    {
+        assignElementsFromRange(v, std::make_integer_sequence<int, M>{});
+    }
+
+    template<typename... Els>
+    requires (sizeof...(Els) == M)
+    constexpr void assignElements(Els&&... els)
+    {
+        assignElementsFromTuple(
+            std::make_tuple(std::forward<Els>(els)...),
+            std::make_integer_sequence<int, M>{}
+        );
     }
 
     // TODO: should be an array of scalars rather than elements to control
